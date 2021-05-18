@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+ 	
+	<resultMap id="purchaseSelectMap" type="purchase">
+		<result property="tranNo" 				column="tran_no" 			jdbcType="NUMERIC"/>
+		<result property="purchaseProd.prodNo"	column="prod_no" 			jdbcType="NUMERIC" />
+		<result property="buyer.userId" 		column="buyer_id" 			jdbcType="VARCHAR" />
+		<result property="paymentOption" 		column="payment_option" 	jdbcType="CHAR" />
+		<result property="receiverName" 		column="receiver_name" 		jdbcType="VARCHAR" />
+		<result property="receiverPhone" 		column="receiver_phone" 	jdbcType="VARCHAR" />
+		<result property="divyAddr" 			column="dlvy_addr" 			jdbcType="VARCHAR" />
+		<result property="divyRequest" 			column="dlvy_request" 		jdbcType="VARCHAR" />
+		<result property="tranCode" 			column="tran_status_code" 	jdbcType="CHAR" />
+		<result property="orderDate" 			column="order_date" 		jdbcType="DATE" />
+		<result property="divyDate" 			column="dlvy_date" 			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- SQL : INSERT -->
+	<insert 	id="addPurchase"		parameterType="purchase" >
+	 	INSERT 
+		INTO transaction(tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone, dlvy_addr, dlvy_request, tran_status_code, order_date, dlvy_date)
+		VALUES (
+					seq_transaction_tran_no.NEXTVAL,
+					#{purchaseProd.prodNo:NUMERIC},
+					#{buyer.userId:VARCHAR},
+					#{paymentOption:CHAR},
+					#{receiverName:VARCHAR},
+					#{receiverPhone:VARCHAR},
+					#{divyAddr:VARCHAR},
+					#{divyRequest:VARCHAR},
+					#{tranCode:CHAR},
+					SYSDATE,
+					#{divyDate:VARCHAR} )
+	 </insert>
+	 
+	 <!-- SQL : SELECT ONE -->
+	 <select 	id="getPurchase"	parameterType="int"	resultMap="purchaseSelectMap">
+		SELECT
+		tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone,
+		dlvy_addr, dlvy_request, tran_status_code, order_date, TO_CHAR(dlvy_date, 'yyyy-mm-dd') 
+		FROM
+		transaction
+		WHERE tran_no = #{value}
+	 </select>
+	 
+	 <select 	id="getPurchase2"	parameterType="int"	resultMap="purchaseSelectMap">
+		SELECT
+		tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone,
+		dlvy_addr, dlvy_request, tran_status_code, order_date, dlvy_date 
+		FROM
+		transaction
+		WHERE prod_no = #{value}
+	 </select>
+	 
+	 <!-- SQL : UPDATE -->
+	 <update	id="updatePurchase"	parameterType="purchase" >
+	   	UPDATE transaction 
+		<set>
+			payment_option= #{paymentOption:CHAR}, 
+			receiver_name= #{receiverName:VARCHAR}, 
+			receiver_phone= #{receiverPhone:VARCHAR},
+			dlvy_addr= #{divyAddr:VARCHAR}, 
+			dlvy_request= #{divyRequest:VARCHAR}
+		</set>
+		WHERE tran_no= #{tranNo}
+	 </update>
+		 
+	<!-- SQL : SELECT LIST -->
+	<select  id="getPurchaseList"  parameterType="map"	resultMap="purchaseSelectMap">
+	  	SELECT
+	  	tran_no, prod_no, user_id, tran_status_code, order_date
+	  		FROM	(SELECT	inner_table.tran_no,  inner_table.prod_no,  inner_table.user_id,
+					inner_table.tran_status_code, inner_table.order_date, ROWNUM AS row_seq
+					FROM	(SELECT
+							t.tran_no, p.prod_no, u.user_id, t.tran_status_code, t.order_date
+							FROM transaction t, product p, users u
+							WHERE p.prod_no = t.prod_no
+							AND t.buyer_id in #{buyerId}
+							ORDER BY tran_no ) inner_table
+					WHERE ROWNUM &lt;= #{search.endRowNum} )
+		WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum} 
+	 </select>
+	 	<!--  위 두번째 subQuery 의  
+	 			WHERE ROWNUM &lt;= #{endRowNum} ) 는
+	 			WHERE ROWNUM <= #{endRowNum} ) 의미이며..
+	 			< 는 keyword 로 &lt; 를	사용.
+	 			
+	 			<![CDATA[  ~~~  ]]> 를 이용하여 아래와 같이 사용  할 수 있다.
+	 			CDATA ==> Character Data 의 의미 Java 에서 \n 같은 특수문자 처리  
+
+				WHERE ROWNUM <![CDATA[ <=]]> #{endRowNum} )
+		-->
+	
+	<!-- SQL : SELECT ROW Count -->	 
+	 <select  id="getTotalCount"  parameterType="String"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM (SELECT
+							t.tran_no, p.prod_no, u.user_id, t.tran_status_code, t.order_date
+							FROM transaction t, product p, users u
+							WHERE p.prod_no = t.prod_no
+							AND t.buyer_id = u.user_id
+							AND t.buyer_id in #{buyerId}
+							ORDER BY tran_no )							
+	 </select>
+	 
+	 
+	  <update	id="updateTranCodePurchase"	parameterType="purchase" >
+	   	UPDATE transaction 
+		<set>
+				tran_status_code= #{tranCode}
+		</set>
+		WHERE tran_no= #{tranNo}
+	 </update>
+	 
+</mapper>

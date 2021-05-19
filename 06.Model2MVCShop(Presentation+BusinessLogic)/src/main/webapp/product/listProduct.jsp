@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 	// 검색 / page 두가지 경우 모두 Form 전송을 위해 JavaScrpt 이용  
-	function fncGetUserList(currentPage) {
+	function fncGetList(currentPage) {
 		document.getElementById("currentPage").value = currentPage;
 	   	document.detailForm.submit();		
 	}
@@ -22,7 +22,7 @@
 
 <div style="width:98%; margin-left:10px;">
 
-<form name="detailForm" action="/listProduct.do?menu=${param.menu}" method="post">
+<form name="detailForm" action="/listProduct.do?menu=${menu}" method="post">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -34,10 +34,10 @@
 				<tr>
 					<td width="93%" class="ct_ttl01">
 						
-						<c:if test= "${param.menu}"> 
+						<c:if test= "${menu == 'manage'}"> 
 						상품 관리
 						</c:if>
-						<c:if test= "${param.menu}"> 
+						<c:if test= "${menu == 'search'}"> 
 						상품 목록조회
 						</c:if>
 
@@ -60,11 +60,12 @@
 			<select name="searchCondition" class="ct_input_g" style="width:80px">
 				<option value="0"  ${ ! empty search.searchCondition && search.searchCondition==0 ? "selected" : "" }>상품번호</option>
 				<option value="1"  ${ ! empty search.searchCondition && search.searchCondition==1 ? "selected" : "" }>상품명</option>
-				<option value="2"  ${ ! empty search.searchCondition && search.searchCondition==1 ? "selected" : "" }>상품가격</option>
+				<option value="2"  ${ ! empty search.searchCondition && search.searchCondition==2 ? "selected" : "" }>상품가격</option>
 			</select>
 			<input type="text" name="searchKeyword" 
 						value="${! empty search.searchKeyword ? search.searchKeyword : ""}"  
-						class="ct_input_g" style="width:200px; height:20px" > 
+						class="ct_input_g" style="width:200px; height:20px"
+						onkeypress="javascript:if(window.event.keyCode==13){fncGetList('1')}" /> 
 		</td>
 		
 		<td align="right" width="70">
@@ -74,7 +75,7 @@
 						<img src="/images/ct_btnbg01.gif" width="17" height="23">
 					</td>
 					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						<a href="javascript:fncGetUserList('1');">검색</a>
+						<a href="javascript:fncGetList('1');">검색</a>
 					</td>
 					<td width="14" height="23">
 						<img src="/images/ct_btnbg03.gif" width="14" height="23">
@@ -116,7 +117,7 @@
 			<td></td>
 			<td align="left">
 			
-			<a href="/getProduct.do?prodNo=${product.prodNo}&menu=${param.menu}">${product.prodName}</a>
+			<a href="/getProduct.do?prodNo=${product.prodNo}&menu=${menu}">${product.prodName}</a>
 			
 			</td>
 			<td></td>
@@ -125,30 +126,30 @@
 			<td align="left">${product.regDate}</td>
 			<td></td>
 			
-			<c:if test="${param.menu == 'manage'}">
+			<c:if test="${menu == 'manage'}">
 				<td align="left">
 				<c:choose>
-					<c:when test= "${product.proTranCode == '0' }">
-						판매중
-					</c:when>
-					<c:when test= "${product.proTranCode == '1' }">
+					<c:when test= "${product.proTranCode == '1  ' }">
 						구매완료 
 						<a href="/updateTranCodeByProd.do?prodNo=${product.prodNo}&tranCode=2&page=${search.curruntPage}">배송하기</a>
 					</c:when>
-					<c:when test= "${product.proTranCode == '2' }">
+					<c:when test= "${product.proTranCode == '2  ' }">
 						배송중
 					</c:when>
-					<c:when test= "${product.proTranCode == '3' }">
+					<c:when test= "${product.proTranCode == '3  ' }">
 						배송완료
 					</c:when>
+					<c:otherwise>
+						판매중
+					</c:otherwise>
 				</c:choose>
 				</td>
 			</c:if>
 			
-			<c:if test="${param.menu == 'search'}">
+			<c:if test="${menu == 'search'}">
 				<td align="left">
 				<c:choose>
-					<c:when test= "${product.proTranCode == '0' }">
+					<c:when test= "${product.proTranCode == null }">
 						판매중
 					</c:when>
 					<c:otherwise>

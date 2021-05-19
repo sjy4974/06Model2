@@ -11,7 +11,7 @@
 				 contextConfigLocation 으로 등록하는 방법과...
 			ㅇ ContextLoaderListener	 로 등록하는 방법이 있다.	  -->		
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener	</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>		
 	 
 	<context-param>

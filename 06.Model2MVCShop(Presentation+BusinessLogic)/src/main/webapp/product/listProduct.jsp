@@ -131,7 +131,7 @@
 				<c:choose>
 					<c:when test= "${product.proTranCode == '1  ' }">
 						구매완료 
-						<a href="/updateTranCodeByProd.do?prodNo=${product.prodNo}&tranCode=2&page=${search.curruntPage}">배송하기</a>
+						<a href="/updateTranCodeByProd.do?prodNo=${product.prodNo}&tranCode=2&page=${search.currentPage}">배송하기</a>
 					</c:when>
 					<c:when test= "${product.proTranCode == '2  ' }">
 						배송중

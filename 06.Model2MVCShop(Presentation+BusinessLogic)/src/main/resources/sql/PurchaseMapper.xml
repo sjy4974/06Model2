@@ -17,7 +17,7 @@
 		<result property="divyRequest" 			column="dlvy_request" 		jdbcType="VARCHAR" />
 		<result property="tranCode" 			column="tran_status_code" 	jdbcType="CHAR" />
 		<result property="orderDate" 			column="order_date" 		jdbcType="DATE" />
-		<result property="divyDate" 			column="dlvy_date" 			jdbcType="VARCHAR" />
+		<result property="divyDate" 			column="dlvy_date" 			jdbcType="DATE" />
 	</resultMap>
 	
 	<!-- SQL : INSERT -->
@@ -42,7 +42,7 @@
 	 <select 	id="getPurchase"	parameterType="int"	resultMap="purchaseSelectMap">
 		SELECT
 		tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone,
-		dlvy_addr, dlvy_request, tran_status_code, order_date, TO_CHAR(dlvy_date, 'yyyy-mm-dd') 
+		dlvy_addr, dlvy_request, tran_status_code, order_date, dlvy_date 
 		FROM
 		transaction
 		WHERE tran_no = #{value}
@@ -73,12 +73,12 @@
 	<!-- SQL : SELECT LIST -->
 	<select  id="getPurchaseList"  parameterType="map"	resultMap="purchaseSelectMap">
 	  	SELECT
-	  	tran_no, prod_no, user_id, tran_status_code, order_date
-	  		FROM	(SELECT	inner_table.tran_no,  inner_table.prod_no,  inner_table.user_id,
-					inner_table.tran_status_code, inner_table.order_date, ROWNUM AS row_seq
+	  	tran_no, prod_no, buyer_id, tran_status_code, receiver_phone, receiver_name
+	  		FROM	(SELECT	inner_table.tran_no,  inner_table.prod_no,  inner_table.buyer_id,
+					inner_table.tran_status_code, inner_table.receiver_phone, inner_table.receiver_name, ROWNUM AS row_seq
 					FROM	(SELECT
-							t.tran_no, p.prod_no, u.user_id, t.tran_status_code, t.order_date
-							FROM transaction t, product p, users u
+							t.tran_no, p.prod_no, t.buyer_id, t.tran_status_code, t.receiver_phone, t.receiver_name
+							FROM transaction t, product p
 							WHERE p.prod_no = t.prod_no
 							AND t.buyer_id in #{buyerId}
 							ORDER BY tran_no ) inner_table
@@ -100,7 +100,7 @@
 	 <select  id="getTotalCount"  parameterType="String"	 resultType="int">
 	  	SELECT COUNT(*)
 	  	FROM (SELECT
-							t.tran_no, p.prod_no, u.user_id, t.tran_status_code, t.order_date
+							t.tran_no, p.prod_no, u.user_id, t.tran_status_code, t.receiver_phone, t.receiver_name
 							FROM transaction t, product p, users u
 							WHERE p.prod_no = t.prod_no
 							AND t.buyer_id = u.user_id

@@ -70,10 +70,10 @@
 		<td width="104" class="ct_write">구매방법</td>
 		<td bgcolor="D6D6D6" width="1"></td>
 		<td class="ct_write01">
-			<c:if test="${purchase.paymentOption == '1' }">
+			<c:if test="${purchase.paymentOption == '1  ' }">
 				현금결제
 			</c:if>
-			<c:if test="${purchase.paymentOption == '2' }">
+			<c:if test="${purchase.paymentOption == '2  ' }">
 				신용결제
 			</c:if>
 		</td>
@@ -141,7 +141,7 @@
 		<td align="right">
 			<table border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<c:if test = "${!empty purchase.tranCode && purchase.tranCode == '1'}">
+					<c:if test = "${!empty purchase.tranCode && purchase.tranCode == '1  '}">
 					<td width="17" height="23">
 						<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 					</td>

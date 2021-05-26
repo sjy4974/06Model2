@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 	// 검색 / page 두가지 경우 모두 Form 전송을 위해 JavaScrpt 이용  
-	function fncGetUserList(currentPage) {
+	function fncGetList(currentPage) {
 		document.getElementById("currentPage").value = currentPage;
 	   	document.detailForm.submit();
 	}
@@ -80,13 +80,13 @@
 		<td></td>
 		<td align="left">
 			<c:choose>
-				<c:when test= "${purchase.tranCode == '1' }">
+				<c:when test= "${purchase.tranCode == '1  ' }">
 					구매완료
 				</c:when>
-				<c:when test= "${purchase.tranCode == '2' }">
+				<c:when test= "${purchase.tranCode == '2  ' }">
 					배송중 
 				</c:when>
-				<c:when test= "${purchase.tranCode == '3' }">
+				<c:when test= "${purchase.tranCode == '3  ' }">
 					배송완료
 				</c:when>
 			</c:choose>
@@ -94,7 +94,7 @@
 		
 		<td></td>
 		<td align="left">
-			<c:if test="${purchase.tranCode == '2' }">
+			<c:if test="${purchase.tranCode == '2  ' }">
 				<a href="/updateTranCode.do?tranNo=${purchase.tranNo }&tranCode=3&page=${search.currentPage}">물건도착</a>
 			</c:if>
 		</td>

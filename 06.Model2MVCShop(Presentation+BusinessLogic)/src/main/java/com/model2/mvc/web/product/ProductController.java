@@ -1,5 +1,6 @@
 package com.model2.mvc.web.product;
 
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -72,7 +73,7 @@ public class ProductController {
 		//Business Logic
 		Product product = productService.getProduct(prodNo);
 		
-		Cookie cookie = new Cookie("history"+request.getParameter("prodNo"),request.getParameter("prodNo"));
+		Cookie cookie = new Cookie("history"+URLEncoder.encode(product.getProdName(), "UTF-8"),request.getParameter("prodNo"));
 		cookie.setMaxAge(-1);
 		response.addCookie(cookie);
 		
